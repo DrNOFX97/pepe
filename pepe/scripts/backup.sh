@@ -29,7 +29,9 @@ case "${1:-}" in
             if [ -e "$p" ]; then echo "existed:$p" >> "$B/MANIFEST"; EXIST+=("${p#/}")
             else echo "absent:$p" >> "$B/MANIFEST"; fi
         done
-        [ ${#EXIST[@]} -gt 0 ] && tar -C / -cpzf "$B/files.tgz" "${EXIST[@]}" 2>/dev/null
+        if [ ${#EXIST[@]} -gt 0 ] && ! tar -C / -cpzf "$B/files.tgz" "${EXIST[@]}"; then
+            echo "FALHOU o backup (ver erro do tar acima); nao alteres nada desta etapa"; rm -rf "$B"; exit 1
+        fi
         chmod -R go-rwx "$B"
         echo "$B" ;;
 esac

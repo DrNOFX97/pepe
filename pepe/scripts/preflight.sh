@@ -14,7 +14,9 @@ echo "ambiente grafico: $(dpkg -l 2>/dev/null | awk '/^ii +(xfce4|gnome-shell|kd
 echo "disco: $(lsblk -dno NAME,SIZE,TYPE 2>/dev/null | tr '\n' ';') | cifrado(LUKS): $(lsblk -no TYPE 2>/dev/null | grep -c crypt)"
 
 sec "QUEM ESTA LIGADO AGORA (nao cortar estas sessoes)"
-ss -Htn state established '( sport = :22 )' 2>/dev/null | awk '{print "ssh ativo de:", $4, "->", $3}'
+# portas reais do sshd (pode nao ser a 22 depois de um hardening anterior)
+SSHF=$(sshd -T 2>/dev/null | awk '/^port /{f=f (f?" or ":"") "sport = :" $2} END{print f}')
+ss -Htn state established "( ${SSHF:-sport = :22} )" 2>/dev/null | awk '{print "ssh ativo de:", $4, "->", $3}'
 who 2>/dev/null; echo "ultimos logins:"; last -n 8 -w 2>/dev/null | head -8
 
 sec "ACESSO SSH EFETIVO (sshd -T, inclui drop-ins)"

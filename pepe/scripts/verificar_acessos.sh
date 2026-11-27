@@ -10,7 +10,7 @@
 # nao e necessariamente um erro (pode ser uma mudanca pedida), mas tem de ser explicada ao
 # utilizador antes de continuar.
 # Codigos de saida: 0 = tudo igual; 1 = algo se perdeu/mudou; 2 = nada se perdeu mas surgiram
-# portas PUBLICAS novas (ex.: um pacote arrastou um MTA que ouve em 0.0.0.0:25).
+# portas PUBLICAS novas (ex.: um pacote arrastou um MTA que ouve em 0.0.0.0:25); 3 = sem snapshot.
 set -u
 export LC_ALL=C   # sort e comm tem de usar a mesma ordenacao
 DIR="${HLOG_DIR:-/root/hardening-log}"
@@ -64,7 +64,7 @@ case "${1:-}" in
         echo "servicos: $(grep -c '^svc:' "$SNAP") | portas: $(grep -cE '^(tcp|udp):' "$SNAP") | wg: $(grep -c '^wg:' "$SNAP")"
         ;;
     "")
-        [ -f "$SNAP" ] || { echo "sem snapshot; corre primeiro: $0 --snapshot"; exit 2; }
+        [ -f "$SNAP" ] || { echo "sem snapshot; corre primeiro: $0 --snapshot"; exit 3; }
         NOW=$(mktemp); estado | sort -u > "$NOW"
         LOST=$(comm -23 "$SNAP" "$NOW")
         NEWALL=$(comm -13 "$SNAP" "$NOW")

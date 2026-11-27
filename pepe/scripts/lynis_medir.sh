@@ -11,7 +11,7 @@ DIR="${HLOG_DIR:-/root/hardening-log}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 [ "$(id -u)" = 0 ] || { echo "corre com sudo"; exit 1; }
-command -v lynis >/dev/null || { echo "lynis nao esta instalado: sudo apt-get install -y lynis"; exit 2; }
+command -v lynis >/dev/null || { echo "lynis nao esta instalado: corre primeiro sudo $HERE/instalar_lynis.sh (o da distro e antigo)"; exit 2; }
 mkdir -p "$DIR" && chmod 700 "$DIR"
 
 for i in $(seq 1 60); do
