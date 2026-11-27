@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/capa.webp" alt="Pepe" width="100%">
+</p>
+
 # Pepe
 
 **Skill do Claude Code que endurece servidores Ubuntu/Debian guiada pelo score do Lynis, sem partir SSH, VPN, firewall nem serviços.**
