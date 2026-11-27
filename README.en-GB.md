@@ -294,12 +294,11 @@ Other limitations:
 └── pepe/                         the skill: the folder you install
     ├── SKILL.md                  workflow, principles and confirmation rules
     ├── scripts/                  preflight, access check, Lynis, backup, report
-    ├── references/
-    │   ├── catalogo-medidas.md   46 measures by class, with Lynis test and rollback
-    │   ├── licoes.md             pitfalls found on real servers
-    │   └── relatorio.md          how to generate the final report and its screenshot
-    └── assets/
-        └── hardening_ubuntu.sh   advanced script v3.1, used as a list of measures
+    │                             and hardening_ubuntu.sh (advanced script v3.1)
+    └── references/
+        ├── catalogo-medidas.md   46 measures by class, with Lynis test and rollback
+        ├── licoes.md             pitfalls found on real servers
+        └── relatorio.md          how to generate the final report and its screenshot
 ```
 
 The skill's own files are written in Portuguese; the agent reads them and answers in the language you write in.

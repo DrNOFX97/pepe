@@ -289,12 +289,11 @@ Outras limitações:
 └── pepe/                         a skill: a pasta que se instala
     ├── SKILL.md                  fluxo, princípios e regras de confirmação
     ├── scripts/                  preflight, verificação de acessos, Lynis, backup, relatório
-    ├── references/
-    │   ├── catalogo-medidas.md   46 medidas por classe, com teste Lynis e rollback
-    │   ├── licoes.md             armadilhas encontradas em servidores reais
-    │   └── relatorio.md          como gerar o relatório final e o print
-    └── assets/
-        └── hardening_ubuntu.sh   script avançado v3.1, usado como lista de medidas
+    │                             e hardening_ubuntu.sh (script avançado v3.1)
+    └── references/
+        ├── catalogo-medidas.md   46 medidas por classe, com teste Lynis e rollback
+        ├── licoes.md             armadilhas encontradas em servidores reais
+        └── relatorio.md          como gerar o relatório final e o print
 ```
 
 ## Roadmap

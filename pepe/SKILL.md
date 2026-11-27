@@ -55,7 +55,7 @@ Referências, lê quando precisares:
   antes e como desfazer. É daqui que sai o plano.
 - `references/licoes.md`: armadilhas reais (dois Lynis em simultâneo, UFW a repor sysctl, drop-ins
   do SSH, `NOPASSWD`…).
-- `assets/hardening_ubuntu.sh`: o script avançado original. Só leitura e inspiração.
+- `scripts/hardening_ubuntu.sh`: o script avançado original. Só leitura e inspiração.
 
 ## Acesso ao alvo
 
@@ -88,7 +88,7 @@ ao alvo e como ganhas root decide-se na Fase 0:
    distro costuma ser antigo), depois `lynis_medir.sh baseline`. Esse é o **score inicial**, e
    todas as medições do trabalho têm de usar a mesma versão (o script mostra-a).
    Vê se há atualizações pendentes: o aviso `PKGS-7392` custa ~5 pontos e engana a leitura.
-5. Compara com o `assets/hardening_ubuntu.sh`: que medidas ele aplicaria, quais já estão feitas,
+5. Compara com o `scripts/hardening_ubuntu.sh`: que medidas ele aplicaria, quais já estão feitas,
    quais seriam prejudiciais *neste* sistema (ver `licoes.md`).
 
 ### Fase 1: plano
