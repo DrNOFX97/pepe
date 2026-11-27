@@ -91,12 +91,46 @@ flowchart TD
 
 ### Instalação
 
-Copia a pasta `pepe/` para a pasta de skills do Claude Code, ou descomprime `pepe.zip` lá:
+A skill é a pasta `pepe/` deste repositório. Tem de ficar em `.claude/skills/pepe/`, dentro da tua
+pasta de utilizador, para o Claude Code a carregar.
 
-- Windows: `%USERPROFILE%\.claude\skills\pepe\`
-- Linux / macOS: `~/.claude/skills/pepe/`
+**1. A partir do GitHub (recomendado)**
 
-Abre uma sessão nova do Claude Code para a skill ser carregada.
+Precisas do `git` e de acesso ao repositório (`gh auth login` ou uma chave SSH registada no GitHub).
+
+PowerShell (Windows):
+
+```powershell
+git clone --depth 1 git@github.com:DrNOFX97/pepe.git "$env:TEMP\pepe-repo"
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+Copy-Item "$env:TEMP\pepe-repo\pepe" "$env:USERPROFILE\.claude\skills\pepe" -Recurse -Force
+```
+
+Bash (Linux / macOS / WSL):
+
+```bash
+git clone --depth 1 git@github.com:DrNOFX97/pepe.git /tmp/pepe-repo
+mkdir -p ~/.claude/skills
+cp -r /tmp/pepe-repo/pepe ~/.claude/skills/pepe
+```
+
+Sem chave SSH, usa o URL HTTPS (`https://github.com/DrNOFX97/pepe.git`) ou `gh repo clone DrNOFX97/pepe`.
+
+**2. Descarregar o `pepe.zip`**
+
+Descomprime o `pepe.zip` (traz a pasta `pepe/`) em `%USERPROFILE%\.claude\skills\` (Windows) ou
+`~/.claude/skills/` (Linux / macOS).
+
+**3. Verificar**
+
+Abre uma **sessão nova** do Claude Code (as skills só são lidas no arranque) e escreve `/pepe`. Se a
+skill aparecer na lista, está instalada.
+
+**Atualizar:** volta a correr os comandos de `git clone` (apaga antes `~/.claude/skills/pepe`, ou
+usa `-Force` no PowerShell) ou faz `git pull` na pasta clonada e copia `pepe/` outra vez.
+
+> O repositório traz um `.gitattributes` que mantém os `.sh` com quebras de linha LF. No Windows
+> isso evita o erro `bad interpreter: ^M` quando os scripts são copiados para um servidor Linux.
 
 ### Utilização
 
@@ -143,41 +177,47 @@ remover compiladores (levaria o ambiente gráfico).
 
 ## Testing
 
-Não há suite de testes automatizados. Os scripts foram executados à mão no servidor acima (e o
-`instalar_lynis.sh` numa VM Ubuntu 24.04, onde atualizou o Lynis 3.0.9 para a 3.1.7):
+Não há suite de testes automatizados. Os scripts foram executados à mão no servidor acima e numa VM
+Ubuntu 24.04 (onde o `instalar_lynis.sh` atualizou o Lynis 3.0.9 para a 3.1.7):
 inventário, snapshot com deteção de uma alteração propositada, backup/restauro (incluindo ficheiro
 criado de novo) e medição completa do Lynis.
 
 ## Project Structure
 
 ```text
-pepe/
-├── SKILL.md                    fluxo, princípios e regras de confirmação
-├── scripts/
-│   ├── preflight.sh
-│   ├── verificar_acessos.sh
-│   ├── instalar_lynis.sh
-│   ├── lynis_medir.sh
-│   ├── lynis_perdas.sh
-│   ├── backup.sh
-│   └── gerar_relatorio.py
-├── references/
-│   ├── catalogo-medidas.md     medidas por classe B/M/R, com teste Lynis e rollback
-│   ├── relatorio.md            como gerar a página final e tirar-lhe o print
-│   └── licoes.md               armadilhas reais (dois Lynis em simultâneo, UFW, NOPASSWD…)
-└── assets/
-    └── hardening_ubuntu.sh     script avançado v3.1, lista de medidas de referência
+.
+├── README.md
+├── LICENSE
+├── pepe.zip                    a skill empacotada (mesmo conteúdo de pepe/)
+├── docs/                       imagem de capa do README
+├── evidencias/                 print do relatório final (VM Ubuntu 24.04)
+└── pepe/                       a skill (a pasta que se instala)
+    ├── SKILL.md                fluxo, princípios e regras de confirmação
+    ├── scripts/
+    │   ├── preflight.sh
+    │   ├── verificar_acessos.sh
+    │   ├── instalar_lynis.sh
+    │   ├── lynis_medir.sh
+    │   ├── lynis_perdas.sh
+    │   ├── backup.sh
+    │   └── gerar_relatorio.py
+    ├── references/
+    │   ├── catalogo-medidas.md     medidas por classe B/M/R, com teste Lynis e rollback
+    │   ├── relatorio.md            como gerar a página final e tirar-lhe o print
+    │   └── licoes.md               armadilhas reais (dois Lynis em simultâneo, UFW, NOPASSWD…)
+    └── assets/
+        └── hardening_ubuntu.sh     script avançado v3.1, lista de medidas de referência
 ```
 
 ## Roadmap
 
 ### Planned
 
-- Validação ponta a ponta numa VM Ubuntu 24.04 limpa (VirtualBox), partindo de um *snapshot*.
 - Testes automatizados dos scripts.
 
 ### Completed
 
+- Validação ponta a ponta numa VM Ubuntu 24.04 (Lynis 64 → 95).
 - Fluxo por fases com classes de risco e confirmações.
 - Scripts de inventário, verificação de acessos, medição, perdas e backup.
 - Catálogo de medidas e lições aprendidas.
