@@ -157,7 +157,7 @@ pepe/
 │   ├── relatorio.md            como gerar a página final e tirar-lhe o print
 │   └── licoes.md               armadilhas reais (dois Lynis em simultâneo, UFW, NOPASSWD…)
 └── assets/
-    └── hardening_ubuntu.sh     script avançado v3.1 do material do curso (só como referência)
+    └── hardening_ubuntu.sh     script avançado v3.1, lista de medidas de referência
 ```
 
 ## Roadmap
@@ -184,5 +184,4 @@ Fork
 
 ## License
 
-[MIT](LICENSE). Exceção: o `pepe/assets/hardening_ubuntu.sh` é material do curso e **não** está
-abrangido por esta licença (ver `pepe/assets/NOTICE.txt`); está incluído só como referência.
+[MIT](LICENSE), incluindo o `pepe/assets/hardening_ubuntu.sh`.
