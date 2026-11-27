@@ -99,7 +99,7 @@ Cada ponto custou tempo ou quase partiu algo. Lê antes de automatizar.
 - Lista contas por tipo de hash só pelo prefixo (`$6$`, `$y$`), nunca o hash.
 
 ## Scripts de hardening genéricos
-Um script de hardening genérico (o do curso), corrido às cegas neste tipo de servidor: poria `ip_forward=0`,
+O `hardening_ubuntu.sh` do curso, corrido às cegas neste tipo de servidor: poria `ip_forward=0`,
 sobrescreveria o `jail.local`, apagaria as regras do auditd, abriria o SSH ao mundo no UFW,
 bloquearia contas com `faillock`, tornaria sessões SSH finitas e aplicaria `aa-enforce` em tudo.
-Usa-os como inventário de medidas, não como instalador.
+Usa-o como inventário de medidas, não como instalador.

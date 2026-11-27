@@ -1,7 +1,7 @@
 # Catálogo de medidas de hardening (Ubuntu/Debian) com classe de risco
 
-Origem: um script de hardening avançado + o que se aprendeu a aplicá-lo num
-servidor real (sensor Suricata/Zeek/Arkime com VPN WireGuard, Lynis 76 → 92). **Um script destes serve de
+Origem: o script avançado `assets/hardening_ubuntu.sh` + o que se aprendeu a aplicá-lo num
+servidor real (sensor Suricata/Zeek/Arkime com VPN WireGuard, Lynis 76 → 92). **O script serve de
 lista de medidas, não de instalador**: cada linha abaixo diz quando se aplica, o que verificar
 antes e como desfazer. Antes de qualquer medida, confirma o estado atual — muitas já estão feitas.
 

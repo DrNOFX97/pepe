@@ -20,8 +20,8 @@ plano para os **90**) ou quando fica demonstrado, por escrito, o que o impede.
 
 Destina-se a quem administra servidores reais (com VPN, captura de tráfego, serviços internos) e
 não pode correr um script de hardening genérico às cegas: esses scripts, aplicados sem adaptação,
-desfazem configuração que já estava afinada. O Pepe usa um catálogo de **medidas**, não um instalador,
-e adapta cada uma ao sistema.
+desfazem configuração que já estava afinada. O Pepe usa o script avançado como **lista de
+medidas**, não como instalador, e adapta cada uma ao sistema.
 
 > **Porquê "Pepe"?** O nome é uma homenagem ao futebolista Pepe, pela dureza: a skill torna o
 > servidor duro, sem lhe tirar a mobilidade, isto é, sem partir os acessos de quem o usa.
@@ -156,6 +156,8 @@ pepe/
 │   ├── catalogo-medidas.md     medidas por classe B/M/R, com teste Lynis e rollback
 │   ├── relatorio.md            como gerar a página final e tirar-lhe o print
 │   └── licoes.md               armadilhas reais (dois Lynis em simultâneo, UFW, NOPASSWD…)
+└── assets/
+    └── hardening_ubuntu.sh     script avançado v3.1 do material do curso (só como referência)
 ```
 
 ## Roadmap
@@ -182,4 +184,5 @@ Fork
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). Exceção: o `pepe/assets/hardening_ubuntu.sh` é material do curso e **não** está
+abrangido por esta licença (ver `pepe/assets/NOTICE.txt`); está incluído só como referência.

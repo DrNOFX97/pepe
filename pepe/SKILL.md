@@ -1,6 +1,6 @@
 ---
 name: pepe
-description: Pepe: hardening seguro e medido de um servidor Ubuntu/Debian, guiado pelo score do Lynis. Faz um Lynis inicial, inventaria o que está instalado e falta, adapta as medidas do catálogo de hardening ao sistema real, nunca parte ligações nem acessos privados (SSH, VPN/WireGuard, firewall, serviços), aplica sozinho o que é de baixo risco, pede confirmação nas de médio risco e em tudo o que é de raiz, regista o score antes e depois de cada etapa e repete até chegar aos 80 (e planeia os 90). Usar SEMPRE que o utilizador falar em hardening, endurecer/proteger/blindar um servidor ou VM Ubuntu, Lynis, subir o score ou o "hardening index", auditoria de segurança de um Linux, ou pedir para correr/adaptar um script de hardening, ou chamar pelo Pepe (/pepe), mesmo que não diga "skill" nem "Lynis".
+description: Pepe: hardening seguro e medido de um servidor Ubuntu/Debian, guiado pelo score do Lynis. Faz um Lynis inicial, inventaria o que está instalado e falta, adapta as medidas do script de hardening avançado ao sistema real, nunca parte ligações nem acessos privados (SSH, VPN/WireGuard, firewall, serviços), aplica sozinho o que é de baixo risco, pede confirmação nas de médio risco e em tudo o que é de raiz, regista o score antes e depois de cada etapa e repete até chegar aos 80 (e planeia os 90). Usar SEMPRE que o utilizador falar em hardening, endurecer/proteger/blindar um servidor ou VM Ubuntu, Lynis, subir o score ou o "hardening index", auditoria de segurança de um Linux, ou pedir para correr/adaptar o hardening_ubuntu.sh, ou chamar pelo Pepe (/pepe), mesmo que não diga "skill" nem "Lynis".
 ---
 
 # Pepe: hardening de Ubuntu com Lynis
@@ -16,7 +16,7 @@ usa é a condição. Quando os dois colidem, ganha a condição.
 2. **Acessos privados são intocáveis.** VPN, SSH de colegas, dashboards internos, túneis, contas
    de serviço e redes de gestão são o que o utilizador tem a perder. Guarda o estado deles antes
    da primeira alteração e verifica-o depois de cada passo.
-3. **Um script de hardening genérico é uma lista de medidas, não um instalador.** Corrido às cegas num
+3. **O script de hardening é uma lista de medidas, não um instalador.** Corrido às cegas num
    servidor real, desfaz configuração que já estava afinada (ver `references/licoes.md`). Extrai
    cada medida, vê se já existe, adapta-a e aplica só o que cabe neste sistema.
 4. **O risco decide quem decide.** Baixo: aplicas. Médio: planeias e o utilizador confirma.
@@ -55,6 +55,7 @@ Referências, lê quando precisares:
   antes e como desfazer. É daqui que sai o plano.
 - `references/licoes.md`: armadilhas reais (dois Lynis em simultâneo, UFW a repor sysctl, drop-ins
   do SSH, `NOPASSWD`…).
+- `assets/hardening_ubuntu.sh`: o script avançado original. Só leitura e inspiração.
 
 ## Acesso ao alvo
 
@@ -87,8 +88,8 @@ ao alvo e como ganhas root decide-se na Fase 0:
    distro costuma ser antigo), depois `lynis_medir.sh baseline`. Esse é o **score inicial**, e
    todas as medições do trabalho têm de usar a mesma versão (o script mostra-a).
    Vê se há atualizações pendentes: o aviso `PKGS-7392` custa ~5 pontos e engana a leitura.
-5. Se o utilizador tiver um script de hardening próprio, compara-o com o catálogo: que medidas
-   aplicaria, quais já estão feitas, quais seriam prejudiciais *neste* sistema (ver `licoes.md`).
+5. Compara com o `assets/hardening_ubuntu.sh`: que medidas ele aplicaria, quais já estão feitas,
+   quais seriam prejudiciais *neste* sistema (ver `licoes.md`).
 
 ### Fase 1: plano
 
