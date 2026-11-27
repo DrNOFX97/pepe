@@ -131,6 +131,11 @@ Validado num servidor Ubuntu 26.04 LTS com sensor de rede (Suricata, Zeek, Arkim
 UFW com rate-limit e fail2ban: o Lynis 3.1.6 passou de **76 para 92** (343 de 372 pontos, 0 avisos) sem
 perder nenhum acesso; o `lynis_medir.sh` reproduziu os 92 na medição final.
 
+Numa VM Ubuntu 24.04.5 LTS (`ubuntu-teste`) o Lynis 3.1.7 passou de **64 para 95** (319 de 334 pontos,
+0 avisos). Este é o relatório final que a skill gera:
+
+![Relatório final do Pepe: Lynis 64 → 95 numa VM Ubuntu 24.04](evidencias/lynis-report-vm-teste.png)
+
 Num servidor com VPN e captura, o teto prático ronda os **92–93**. O que fica sem pontos de
 propósito está documentado em `references/catalogo-medidas.md`: cifra de disco (LUKS), partições
 separadas, `ip_forward=0` e `rp_filter=1` (partem a VPN), `/tmp` `noexec` (parte Java/OpenSearch),
