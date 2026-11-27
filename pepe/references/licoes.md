@@ -8,6 +8,12 @@ Cada ponto custou tempo ou quase partiu algo. Lê antes de automatizar.
   `systemd-sysctl` e repõe-no. Nem o ficheiro em `sysctl.d` chega, se outro serviço escreve por
   cima. **Faz um reinício no fim** e compara as definições antes/depois (grava um ficheiro de
   estado com `ufw`, serviços, `sysctl`, montagens e opções do `sshd`, e faz `diff`).
+- **Um `dpkg` partido pode deixar um initramfs mau que só se vê no reinício.** Na VM Wazuh
+  (27/11) o kernel 5.15.0-204 foi instalado no meio de um `unattended-upgrade` interrompido: o
+  arranque encravou em "Loading essential drivers" (CPU parado), sem culpa do hardening. Para
+  distinguir: Esc no GRUB → kernel anterior; se arranca, `update-initramfs -u -k <novo>`. Para
+  testar sem risco: `GRUB_DEFAULT=saved`, `grub-set-default` no kernel bom e `grub-reboot` no
+  novo (só uma vez; um reset volta ao bom). No fim repor `GRUB_DEFAULT=0`.
 - Faz o reinício com a máquina desligada e um snapshot offline: o *live snapshot* ficou preso
   13 minutos num VirtualBox sobre Hyper-V.
 - Em convidados VirtualBox, `systemd-timesyncd` e `vboxadd-service` alternam entre arranques
@@ -43,6 +49,9 @@ Cada ponto custou tempo ou quase partiu algo. Lê antes de automatizar.
   verificador original só dava alarme se algo *desaparecesse*, por isso passou. Agora
   `verificar_acessos.sh` compara o **alcance** das portas (`publica` vs `local`) e sai com código
   2 perante uma porta pública nova. Instala sempre com `--no-install-recommends` e lê o código.
+- **`--no-install-recommends` não chega sempre:** no Ubuntu 22.04 o `chkrootkit` *depende* (não
+  recomenda) de um MTA e trouxe o Postfix em `0.0.0.0:25` mesmo assim (VM Wazuh, 27/11).
+  Depois de instalar, `postconf -e 'inet_interfaces = loopback-only'` + `systemctl restart postfix`.
 - **Uma atualização pode parar outro serviço por conflito de unidades.** Num convidado
   VirtualBox, o `apt upgrade` pôs o `systemd-timesyncd` a funcionar e este parou o
   `vboxadd-service`. O verificador acusou "PERDIDO"; foi investigado (`journalctl -u`), aceite
@@ -93,13 +102,52 @@ Cada ponto custou tempo ou quase partiu algo. Lê antes de automatizar.
 - No Git Bash, argumentos que começam por `/` (ex.: `/home/x`) são convertidos em caminhos do
   Windows. Corre comandos remotos que comecem por `cd`, ou usa caminhos relativos.
 
+## Alvos sem SSH e alvos que não se endurecem
+- **Ver o que a máquina serve antes do plano.** O `Lab26` parecia "VM de captura" e era um lab
+  de apps web vulneráveis de propósito (DVWA, bWAPP, `/var/www` 777) em Debian 9 sem suporte.
+  Endurecer partia o exercício: fez-se só a auditoria (baseline + relatório) e repôs-se o snapshot.
+- **VM sem SSH:** `VBoxManage guestcontrol` corre comandos com utilizador/password (via
+  `--passwordfile`, nunca na linha de comandos). Com Guest Additions antigas (5.1) num VirtualBox
+  7: não passar `argv0` depois de `--` (o `--exe` já o é); `copyto` grava o ficheiro mas dá
+  `VERR_NOT_SUPPORTED` (confirmar com hash); `copyfrom` falha: ler ficheiros com `cat`; o PATH
+  não tem `/usr/local/bin`.
+- **Python antigo:** Debian 9 traz Python 3.5 (sem `capture_output`/`text=`); o
+  `gerar_relatorio.py` usa só `stdout=PIPE, universal_newlines=True`.
+
+## Sistemas fora de suporte e últimos pontos (Lab26, Debian 9: 65 → 98)
+- **Repositórios de uma versão em fim de vida:** apontar para `archive.debian.org` com
+  `Check-Valid-Until "false"`. As chaves do 9 expiraram (`EXPKEYSIG` = assinatura válida, chave
+  fora de prazo). O `debian-security` é assinado com chaves novas: importá-las por ID longo do
+  keyserver para `trusted.gpg.d/*.gpg` **com permissão 644** (com 600 o `_apt` ignora-as em
+  silêncio). O `main` só tem `InRelease` com chaves velhas: verificar o `Release.gpg` à mão com
+  `gpgv` (aceita chaves expiradas) e o hash do `Packages` em cache; só então `[trusted=yes]`.
+  Não confiar num teste de autenticação com um pacote que já está em cache.
+- **`/tmp` com `noexec` parte o apt** (scripts do debconf) e com ele as atualizações automáticas:
+  `DPkg::Pre-Invoke {"mount -o remount,exec /tmp";}` + `Post-Invoke` com `noexec` +
+  `APT::ExtractTemplates::TempDir "/var/cache/apt/tmp"`.
+- **Guest Additions antigas encravam com argumentos longos** no `guestcontrol run`: enviar
+  scripts (`copyto`) e correr os demorados com `nohup … &`, consultando um ficheiro de saída.
+- **`FIRE-4508` conta alvos, não só a política:** regras `-A INPUT … -j ACCEPT` diretas na tabela
+  `security` dão pontuação parcial. Pôr as aceitações numa chain própria (`-A INPUT -j PEPE-IN`)
+  e política DROP, em IPv4 **e** IPv6 (o `ip6table_security` tem de carregar antes do
+  `modules_disabled`).
+- **`modules_disabled=1`** só com uma unidade systemd no fim do arranque (`After=` UFW, usbguard,
+  auditd, tabelas, loop): aplicado cedo impede o arranque dessas peças.
+- **Partições separadas sem reinstalar:** `/home` e `/var` em ficheiros *loop* (`/srv/*.img`,
+  `loop,nodev,nosuid` no `fstab`; `/var` sem `noexec` por causa do dpkg), copiados com os
+  serviços parados e ativos no reinício. Só em máquinas descartáveis.
+- **`dpkg-divert` em vez de purgar:** purgar o `binutils` levava o `rkhunter`, o `chkrootkit` e o
+  Xorg; desviar o `/usr/bin/as` tira o "compilador" ao Lynis e deixa tudo o resto.
+- `LOGG-2154` aceita qualquer `@destino` no rsyslog, até `127.0.0.1`: não o fazer sem recetor
+  real (é maquilhagem). `MALW-3280` fica sempre de fora sem antivírus comercial.
+
 ## Segredos
 - Nunca imprimas passwords (do `.env`, `shadow`, GRUB). Passwords geradas por ti vão para o
   ficheiro de segredos do utilizador, e a cópia no alvo é apagada (`shred -u`).
 - Lista contas por tipo de hash só pelo prefixo (`$6$`, `$y$`), nunca o hash.
 
 ## Scripts de hardening genéricos
-O `hardening_ubuntu.sh` do curso, corrido às cegas neste tipo de servidor: poria `ip_forward=0`,
+O `hardening_ubuntu.sh`, corrido às cegas neste tipo de servidor: poria `ip_forward=0`,
 sobrescreveria o `jail.local`, apagaria as regras do auditd, abriria o SSH ao mundo no UFW,
 bloquearia contas com `faillock`, tornaria sessões SSH finitas e aplicaria `aa-enforce` em tudo.
 Usa-o como inventário de medidas, não como instalador.
