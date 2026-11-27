@@ -26,6 +26,10 @@
   <a href="#limitações">Limitações</a>
 </p>
 
+<p align="center">
+  <b>Português</b> · <a href="README.en-GB.md">English (UK)</a>
+</p>
+
 ---
 
 ## Resumo
@@ -94,8 +98,6 @@ ficam de fora são deixados de propósito e estão documentados em
 
 A skill é a pasta [`pepe/`](pepe). Instala-se copiando-a para `~/.claude/skills/pepe/`.
 
-> [!NOTE]
-> O repositório é privado: clonar exige acesso (`gh auth login`, HTTPS com token ou chave SSH registada no GitHub).
 
 **Linux / macOS / WSL**
 
