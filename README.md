@@ -115,7 +115,7 @@ Remove-Item "$env:USERPROFILE\.claude\skills\pepe" -Recurse -Force -ErrorAction 
 Copy-Item "$env:TEMP\pepe-repo\pepe" "$env:USERPROFILE\.claude\skills\pepe" -Recurse
 ```
 
-**Sem git:** descomprime o [`pepe.zip`](pepe.zip) (contém a pasta `pepe/`) em `~/.claude/skills/`.
+**Sem git:** descarrega o `pepe.zip` da [última release](https://github.com/DrNOFX97/pepe/releases/latest) (contém a pasta `pepe/`) e descomprime-o em `~/.claude/skills/`.
 
 **Verificar:** abre uma sessão **nova** do Claude Code (as skills são lidas no arranque) e escreve
 `/pepe`. **Atualizar:** repete os mesmos comandos; a pasta antiga é substituída.
@@ -246,7 +246,6 @@ Outras limitações:
 .
 ├── README.md
 ├── LICENSE
-├── pepe.zip                      a skill empacotada (mesmo conteúdo de pepe/)
 ├── docs/capa.webp                imagem de capa
 ├── evidencias/                   print do relatório final (VM Ubuntu 24.04)
 └── pepe/                         a skill: a pasta que se instala
