@@ -1,3 +1,0 @@
-hardening_ubuntu.sh (versão 3.1) é material do curso e NÃO está abrangido pela licença MIT
-deste repositório: mantém a licença e a autoria de origem. Está incluído apenas como lista de
-medidas de referência; a skill Pepe não o executa.
