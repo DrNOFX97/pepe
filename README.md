@@ -6,11 +6,11 @@
 
 <p align="center">
   <strong>Hardening medido e reversível de servidores Ubuntu/Debian, guiado pelo score do Lynis.</strong><br>
-  Uma skill do Claude Code que sobe o <em>hardening index</em> sem partir SSH, VPN, firewall nem serviços.
+  Uma skill para agentes de código (Claude Code, OpenCode, Codex, Gemini CLI…) que sobe o <em>hardening index</em> sem partir SSH, VPN, firewall nem serviços.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Claude_Code-skill-D97757?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code skill">
+  <img src="https://img.shields.io/badge/skill-Claude_Code_%7C_OpenCode_%7C_Codex_%7C_Gemini_CLI-D97757?style=flat-square" alt="Skill para Claude Code, OpenCode, Codex e Gemini CLI">
   <img src="https://img.shields.io/badge/Ubuntu%20%7C%20Debian-E95420?style=flat-square&logo=ubuntu&logoColor=white" alt="Ubuntu | Debian">
   <img src="https://img.shields.io/badge/Lynis-3.1.x-2D6DB5?style=flat-square" alt="Lynis 3.1.x">
   <img src="https://img.shields.io/badge/Bash%20%2B%20Python%203-4EAA25?style=flat-square&logo=gnubash&logoColor=white" alt="Bash + Python 3">
@@ -89,15 +89,15 @@ ficam de fora são deixados de propósito e estão documentados em
 
 | Lado | Requisito |
 |---|---|
-| Máquina de trabalho | [Claude Code](https://www.anthropic.com/claude-code) |
+| Máquina de trabalho | Um agente de código que leia skills: Claude Code, OpenCode, Codex, Gemini CLI ou outro. Testado com Claude Code (Sonnet 5.5) e OpenCode (DeepSeek V4.1 Flash) |
 | Alvo | Ubuntu ou Debian com `apt`, `sudo` e Python 3 (incluído por defeito no Ubuntu) |
 | Rede (alvo) | Acesso a `packages.cisofy.com` ou `github.com` para instalar o Lynis mais recente |
 | Ligação | Local, ou por SSH com o acesso que já usas (chave ou `~/.ssh/config`) |
 
 ## Instalação
 
-A skill é a pasta [`pepe/`](pepe). Instala-se copiando-a para `~/.claude/skills/pepe/`.
-
+A skill é a pasta [`pepe/`](pepe). Instala-se copiando-a para a pasta de skills da ferramenta que usas.
+Os comandos abaixo são para o Claude Code (`~/.claude/skills/pepe/`).
 
 **Linux / macOS / WSL**
 
@@ -119,8 +119,12 @@ Copy-Item "$env:TEMP\pepe-repo\pepe" "$env:USERPROFILE\.claude\skills\pepe" -Rec
 
 **Sem git:** descarrega o `pepe.zip` da [última release](https://github.com/DrNOFX97/pepe/releases/latest) (contém a pasta `pepe/`) e descomprime-o em `~/.claude/skills/`.
 
-**Verificar:** abre uma sessão **nova** do Claude Code (as skills são lidas no arranque) e escreve
-`/pepe`. **Atualizar:** repete os mesmos comandos; a pasta antiga é substituída.
+**Outras ferramentas:** copia a pasta `pepe/` para a pasta de skills da ferramenta (por exemplo
+`~/.opencode/skills/`). O OpenCode também lê as skills de `~/.claude/skills/`: se já a instalaste
+para o Claude Code, não precisas de a duplicar.
+
+**Verificar:** abre uma sessão **nova** do teu agente (as skills são lidas no arranque) e escreve
+`/pepe` ou pede o hardening em linguagem natural. **Atualizar:** repete os mesmos comandos; a pasta antiga é substituída.
 
 > [!TIP]
 > O [`.gitattributes`](.gitattributes) força quebras de linha LF nos `.sh`, `.py` e `.md`. No
@@ -192,8 +196,13 @@ as medidas de USB passam a B, porque não há teclado nem rato que se possa bloq
 
 ## Scripts
 
-Os scripts em [`pepe/scripts/`](pepe/scripts) funcionam também sem o Claude. Copia-os para uma
-pasta do utilizador no alvo (não para `/tmp`) e corre-os com `sudo`.
+Os scripts em [`pepe/scripts/`](pepe/scripts) também se podem correr à mão, sem agente. Copia-os
+para uma pasta do utilizador no alvo (não para `/tmp`) e corre-os com `sudo`.
+
+> [!WARNING]
+> Usados à mão, os scripts são da tua inteira responsabilidade. Fora do fluxo da skill não há
+> plano, classes de risco nem confirmações, e não há garantia de que funcionem nem de que não
+> estraguem algo.
 
 | Script | Função | Exemplo |
 |---|---|---|
@@ -204,6 +213,33 @@ pasta do utilizador no alvo (não para `/tmp`) e corre-os com `sudo`.
 | `lynis_perdas.sh` | Tabela de perdas por teste do último Lynis | `sudo ./lynis_perdas.sh` |
 | `backup.sh` | Backup e restauro de configuração; aborta se o backup falhar | `sudo ./backup.sh e2-sysctl /etc/sysctl.d` |
 | `gerar_relatorio.py` | Relatório final em HTML autónomo | `sudo python3 ./gerar_relatorio.py` |
+| `hardening_ubuntu.sh` | Script de hardening avançado (v3.1) em 27 passos; é dele que a skill tira as medidas | `sudo ./hardening_ubuntu.sh` |
+
+**`hardening_ubuntu.sh`**
+
+É a base das medidas do Pepe. Na skill, o agente lê-o, vê que medidas já estão aplicadas no alvo e
+adapta as restantes ao sistema real, em vez de o correr de uma vez. Corrido sozinho, faz 27 passos:
+deteção do ambiente (container, Docker, nome do serviço SSH), atualização do sistema, pacotes de
+segurança (fail2ban, auditd, AIDE, rkhunter, chkrootkit, UFW, AppArmor, Lynis…), PAM e políticas de
+password, UFW com rate-limit no SSH, `sysctl` de kernel e rede, módulos de kernel, SSH com cifras
+modernas, banners, timeout e umask, regras do auditd, jail do fail2ban, `cron`/`at`, permissões de
+ficheiros sensíveis, AppArmor em enforce, journald, `acct`, Ctrl+Alt+Del, AIDE e rkhunter com
+verificação diária, unattended-upgrades e uma auditoria final com o Lynis.
+
+As medidas mais agressivas estão atrás de variáveis no topo do script:
+
+| Variável | Defeito | O que faz |
+|---|---|---|
+| `DISABLE_SSH_PASSWORD_AUTH` | `false` | SSH só por chave |
+| `ENABLE_GRUB_HARDENING` | `false` | Parâmetros de kernel no GRUB (requer reboot) |
+| `SET_GRUB_PASSWORD` | `false` | Password no bootloader (interativa) |
+| `RESTRICT_COMPILERS` | `false` | `gcc`/`cc` só para root |
+| `DISABLE_UNCOMMON_FILESYSTEMS` | `true` | Desativa cramfs, freevxfs, jffs2, hfs, hfsplus e udf |
+| `HARDEN_TMP_MOUNTS` | `false` | `nodev,nosuid,noexec` em `/tmp`, `/var/tmp` e `/dev/shm` |
+| `DISABLE_UNUSED_SERVICES` | `false` | Desativa cups, avahi, rpcbind e nfs-server se estiverem ativos |
+| `FORWARD_JOURNAL_TO_SYSLOG` | `true` | Mantém o reenvio do journald para o syslog |
+
+Com Docker detetado, mantém `ip_forward` ativo; em containers salta os passos de GRUB e kernel.
 
 **Códigos de saída do `verificar_acessos.sh`**
 
@@ -283,7 +319,7 @@ Outras limitações:
 Esta ferramenta altera a configuração de segurança do sistema. Usa-a apenas em máquinas que
 administras ou para as quais tens autorização, e testa primeiro numa cópia ou VM. Apesar das
 verificações de acesso e dos backups, a responsabilidade pelas alterações aplicadas é de quem as
-aprova.
+aprova. Os scripts corridos à mão, fora da skill, são usados por conta e risco de quem os corre.
 
 ## Sobre o nome
 
@@ -292,4 +328,4 @@ mobilidade, isto é, sem partir os acessos de quem o usa.
 
 ## Licença
 
-Distribuído sob a licença [MIT](LICENSE), incluindo o `pepe/assets/hardening_ubuntu.sh`.
+Distribuído sob a licença [MIT](LICENSE).

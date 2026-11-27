@@ -2,15 +2,15 @@
   <img src="docs/capa.webp" alt="Pepe: Lynis hardening skill for Ubuntu and Debian servers" width="100%">
 </p>
 
-<h1 align="center">Pepe: Lynis Hardening Skill for Claude Code</h1>
+<h1 align="center">Pepe: Lynis Hardening Skill for AI Coding Agents</h1>
 
 <p align="center">
   <strong>Measured, reversible hardening of Ubuntu and Debian servers, guided by the Lynis hardening index.</strong><br>
-  A Claude Code skill that raises your Lynis score without breaking SSH, VPN, firewall or running services.
+  A skill for AI coding agents (Claude Code, OpenCode, Codex, Gemini CLI…) that raises your Lynis score without breaking SSH, VPN, firewall or running services.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Claude_Code-skill-D97757?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code skill">
+  <img src="https://img.shields.io/badge/skill-Claude_Code_%7C_OpenCode_%7C_Codex_%7C_Gemini_CLI-D97757?style=flat-square" alt="Skill for Claude Code, OpenCode, Codex and Gemini CLI">
   <img src="https://img.shields.io/badge/Ubuntu%20%7C%20Debian-E95420?style=flat-square&logo=ubuntu&logoColor=white" alt="Ubuntu and Debian">
   <img src="https://img.shields.io/badge/Lynis-3.1.x-2D6DB5?style=flat-square" alt="Lynis 3.1.x">
   <img src="https://img.shields.io/badge/Bash%20%2B%20Python%203-4EAA25?style=flat-square&logo=gnubash&logoColor=white" alt="Bash and Python 3">
@@ -31,7 +31,7 @@
   <a href="#faq">FAQ</a>
 </p>
 
-**Keywords:** Lynis hardening skill · Claude Code skill · Ubuntu server hardening · Debian server
+**Keywords:** Lynis hardening skill · Claude Code skill · OpenCode skill · Codex · Gemini CLI · Ubuntu server hardening · Debian server
 hardening · Lynis hardening index · raise Lynis score · Linux security audit · SSH hardening ·
 sysctl hardening · UFW · fail2ban · AI-assisted server hardening
 
@@ -94,14 +94,15 @@ left out are deliberate and documented in [`catalogo-medidas.md`](pepe/reference
 
 | Side | Requirement |
 |---|---|
-| Working machine | [Claude Code](https://www.anthropic.com/claude-code) |
+| Working machine | A coding agent that reads skills: Claude Code, OpenCode, Codex, Gemini CLI or another. Tested with Claude Code (Sonnet 5.5) and OpenCode (DeepSeek V4.1 Flash) |
 | Target | Ubuntu or Debian with `apt`, `sudo` and Python 3 (included by default on Ubuntu) |
 | Network (target) | Access to `packages.cisofy.com` or `github.com` to install the latest Lynis |
 | Connection | Local, or over SSH with the access you already use (key or `~/.ssh/config`) |
 
 ## Installation
 
-The skill is the [`pepe/`](pepe) folder. Install it by copying it to `~/.claude/skills/pepe/`.
+The skill is the [`pepe/`](pepe) folder. Install it by copying it to the skills folder of the tool you use.
+The commands below are for Claude Code (`~/.claude/skills/pepe/`).
 
 **Linux / macOS / WSL**
 
@@ -123,7 +124,12 @@ Copy-Item "$env:TEMP\pepe-repo\pepe" "$env:USERPROFILE\.claude\skills\pepe" -Rec
 
 **Without git:** download `pepe.zip` from the [latest release](https://github.com/DrNOFX97/pepe/releases/latest) (it contains the `pepe/` folder) and unzip it into `~/.claude/skills/`.
 
-**Verify:** start a **new** Claude Code session (skills are read at startup) and type `/pepe`.
+**Other tools:** copy the `pepe/` folder to that tool's skills folder (for example
+`~/.opencode/skills/`). OpenCode also reads skills from `~/.claude/skills/`, so if you have already
+installed it for Claude Code there is no need to duplicate it.
+
+**Verify:** start a **new** session of your agent (skills are read at startup) and type `/pepe`
+or ask for the hardening in plain language.
 **Update:** repeat the same commands; the old folder is replaced.
 
 > [!TIP]
@@ -196,8 +202,13 @@ devices, USB measures become low risk, because there is no keyboard or mouse tha
 
 ## Scripts
 
-The scripts in [`pepe/scripts/`](pepe/scripts) also work without Claude. Copy them to a user folder
-on the target (not `/tmp`) and run them with `sudo`.
+The scripts in [`pepe/scripts/`](pepe/scripts) can also be run by hand, without an agent. Copy them to a
+user folder on the target (not `/tmp`) and run them with `sudo`.
+
+> [!WARNING]
+> Run by hand, the scripts are entirely at your own risk. Outside the skill's workflow there is no
+> plan, no risk classes and no confirmations, and there is no guarantee that they will work or that
+> they will not break something.
 
 | Script | Purpose | Example |
 |---|---|---|
@@ -208,6 +219,33 @@ on the target (not `/tmp`) and run them with `sudo`.
 | `lynis_perdas.sh` | Per-test loss table from the last Lynis run | `sudo ./lynis_perdas.sh` |
 | `backup.sh` | Backs up and restores configuration; aborts if the backup fails | `sudo ./backup.sh e2-sysctl /etc/sysctl.d` |
 | `gerar_relatorio.py` | Self-contained HTML final report | `sudo python3 ./gerar_relatorio.py` |
+| `hardening_ubuntu.sh` | Advanced hardening script (v3.1) in 27 steps; the skill draws its measures from it | `sudo ./hardening_ubuntu.sh` |
+
+**`hardening_ubuntu.sh`**
+
+This is the basis of Pepe's measures. Within the skill, the agent reads it, checks which measures are
+already in place on the target and adapts the rest to the real system, instead of running it all at
+once. Run on its own, it performs 27 steps: environment detection (container, Docker, SSH service
+name), system update, security packages (fail2ban, auditd, AIDE, rkhunter, chkrootkit, UFW, AppArmor,
+Lynis…), PAM and password policies, UFW with SSH rate-limiting, kernel and network `sysctl`, kernel
+modules, SSH with modern ciphers, banners, timeout and umask, auditd rules, a fail2ban jail,
+`cron`/`at`, permissions on sensitive files, AppArmor in enforce mode, journald, `acct`,
+Ctrl+Alt+Del, AIDE and rkhunter with daily checks, unattended-upgrades and a final Lynis audit.
+
+The more aggressive measures sit behind variables at the top of the script:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `DISABLE_SSH_PASSWORD_AUTH` | `false` | Key-only SSH |
+| `ENABLE_GRUB_HARDENING` | `false` | Kernel parameters via GRUB (requires a reboot) |
+| `SET_GRUB_PASSWORD` | `false` | Bootloader password (interactive) |
+| `RESTRICT_COMPILERS` | `false` | `gcc`/`cc` restricted to root |
+| `DISABLE_UNCOMMON_FILESYSTEMS` | `true` | Disables cramfs, freevxfs, jffs2, hfs, hfsplus and udf |
+| `HARDEN_TMP_MOUNTS` | `false` | `nodev,nosuid,noexec` on `/tmp`, `/var/tmp` and `/dev/shm` |
+| `DISABLE_UNUSED_SERVICES` | `false` | Disables cups, avahi, rpcbind and nfs-server if active |
+| `FORWARD_JOURNAL_TO_SYSLOG` | `true` | Keeps journald forwarding to syslog |
+
+When Docker is detected it keeps `ip_forward` enabled; inside containers it skips the GRUB and kernel steps.
 
 **Exit codes of `verificar_acessos.sh`**
 
@@ -264,7 +302,7 @@ Other limitations:
         └── hardening_ubuntu.sh   advanced script v3.1, used as a list of measures
 ```
 
-The skill's own files are written in Portuguese; Claude reads them and answers in the language you write in.
+The skill's own files are written in Portuguese; the agent reads them and answers in the language you write in.
 
 ## Roadmap
 
@@ -287,7 +325,7 @@ The skill's own files are written in Portuguese; Claude reads them and answers i
 
 This tool changes the security configuration of a system. Only use it on machines you administer
 or are authorised to change, and test it on a copy or VM first. Despite the access checks and
-backups, responsibility for the changes applied lies with whoever approves them.
+backups, responsibility for the changes applied lies with whoever approves them. Scripts run by hand, outside the skill, are used at the risk of whoever runs them.
 
 ## About the name
 
@@ -296,4 +334,4 @@ without taking away its mobility, that is, without breaking the access of the pe
 
 ## Licence
 
-Distributed under the [MIT licence](LICENSE), including `pepe/assets/hardening_ubuntu.sh`.
+Distributed under the [MIT licence](LICENSE).
