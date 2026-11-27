@@ -64,7 +64,7 @@ system:
 
 | Target | Context | Lynis | Score | Access lost |
 |---|---|---|---|---|
-| Ubuntu 26.04 LTS server | Network sensor (Suricata, Zeek, Arkime), WireGuard VPN, UFW with rate limiting, fail2ban | 3.1.6 | **76 → 92** (343/372 points, 0 warnings) | 0 |
+| Ubuntu 26.04 LTS server | Network sensor (Suricata, Zeek, Arkime), WireGuard VPN, UFW with rate limiting, fail2ban | 3.1.7 | **63 → 92** (343/372 points, 0 warnings) | 0 |
 | Ubuntu 24.04.5 LTS VM | Test server in VirtualBox | 3.1.7 | **64 → 95** (319/334 points, 0 warnings) | 0 |
 | Wazuh-Manager VM (Ubuntu 22.04.5 LTS) | Wazuh manager in the detection lab | 3.1.7 | **68 → 92** (312/338 points, 0 warnings) | — |
 
@@ -78,6 +78,12 @@ And on the Wazuh-Manager VM (Ubuntu 22.04):
 
 <p align="center">
   <img src="evidencias/lynis-report-wazuh-manager.png" alt="Pepe final report: Lynis score 68 → 92 on the Wazuh-Manager VM (Ubuntu 22.04)" width="85%">
+</p>
+
+And on the Ubuntu 26.04 server (the first measurement, on 5 Nov, used Lynis 3.0.9; the [original HTML](evidencias/relatorio-servidor-ubuntu-26.04.html) is in the repository too):
+
+<p align="center">
+  <img src="evidencias/lynis-report-servidor.png" alt="Pepe final report: Lynis score 63 → 92 on the Ubuntu 26.04 server" width="85%">
 </p>
 
 On a server with a VPN and traffic capture, the practical ceiling is around **92–93**. The points
@@ -297,7 +303,7 @@ Other limitations:
 ├── README.md / README.en-GB.md
 ├── LICENSE
 ├── docs/capa.webp                cover image
-├── evidencias/                   final report screenshots (Ubuntu 24.04 and Wazuh-Manager VMs)
+├── evidencias/                   final report screenshots and HTML (Ubuntu 24.04 VM, Wazuh-Manager VM and server)
 └── pepe/                         the skill: the folder you install
     ├── SKILL.md                  workflow, principles and confirmation rules
     ├── scripts/                  preflight, access check, Lynis, backup, report

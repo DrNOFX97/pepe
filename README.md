@@ -59,7 +59,7 @@ sistema real:
 
 | Alvo | Contexto | Lynis | Score | Acessos perdidos |
 |---|---|---|---|---|
-| Servidor Ubuntu 26.04 LTS | Sensor de rede (Suricata, Zeek, Arkime), VPN WireGuard, UFW com rate-limit, fail2ban | 3.1.6 | **76 → 92** (343/372 pontos, 0 avisos) | 0 |
+| Servidor Ubuntu 26.04 LTS | Sensor de rede (Suricata, Zeek, Arkime), VPN WireGuard, UFW com rate-limit, fail2ban | 3.1.7 | **63 → 92** (343/372 pontos, 0 avisos) | 0 |
 | VM Ubuntu 24.04.5 LTS | Servidor de teste em VirtualBox | 3.1.7 | **64 → 95** (319/334 pontos, 0 avisos) | 0 |
 | VM Wazuh-Manager (Ubuntu 22.04.5 LTS) | Manager do Wazuh no laboratório de deteção | 3.1.7 | **68 → 92** (312/338 pontos, 0 avisos) | — |
 
@@ -73,6 +73,12 @@ E na VM Wazuh-Manager (Ubuntu 22.04):
 
 <p align="center">
   <img src="evidencias/lynis-report-wazuh-manager.png" alt="Relatório final do Pepe: Lynis 68 → 92 na VM Wazuh-Manager (Ubuntu 22.04)" width="85%">
+</p>
+
+E no servidor Ubuntu 26.04 (a primeira medição, de 5-11, foi com o Lynis 3.0.9; o [HTML original](evidencias/relatorio-servidor-ubuntu-26.04.html) também está no repositório):
+
+<p align="center">
+  <img src="evidencias/lynis-report-servidor.png" alt="Relatório final do Pepe: Lynis 63 → 92 no servidor Ubuntu 26.04" width="85%">
 </p>
 
 Num servidor com VPN e captura de tráfego, o teto prático ronda os **92–93**. Os pontos que
@@ -292,7 +298,7 @@ Outras limitações:
 ├── README.md
 ├── LICENSE
 ├── docs/capa.webp                imagem de capa
-├── evidencias/                   prints dos relatórios finais (VM Ubuntu 24.04 e Wazuh-Manager)
+├── evidencias/                   prints e HTML dos relatórios finais (VM Ubuntu 24.04, Wazuh-Manager e servidor)
 └── pepe/                         a skill: a pasta que se instala
     ├── SKILL.md                  fluxo, princípios e regras de confirmação
     ├── scripts/                  preflight, verificação de acessos, Lynis, backup, relatório
